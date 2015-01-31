@@ -100,31 +100,31 @@ static void window_load(Window *window) {
   // Things to fix about this layout:
   // - Title should get some decoration to make it clear what it is.
   // - Artist name should be larger
-  // - Album should be italicized
+  // - Album should be italicized (?)
   // - Positions of the artist/album/positions should be calculated from box.
   //
   title_text_layer = text_layer_create(GRect(5, 5, bounds.size.w, 30));
   text_layer_set_text(title_text_layer, "KEXP Now Playing");
   text_layer_set_text_alignment(title_text_layer, GTextAlignmentCenter);
-  text_layer_set_font(title_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
+  text_layer_set_font(title_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   layer_add_child(window_layer, text_layer_get_layer(title_text_layer));
   
   current_artist_text_layer = text_layer_create((GRect) { .origin = { 0, 35 }, .size = { bounds.size.w, 30 } });
   text_layer_set_text_alignment(current_artist_text_layer, GTextAlignmentCenter);
   text_layer_set_overflow_mode(current_artist_text_layer, GTextOverflowModeTrailingEllipsis);
-  text_layer_set_font(current_artist_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+  text_layer_set_font(current_artist_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28));
   layer_add_child(window_layer, text_layer_get_layer(current_artist_text_layer));
 
   current_song_text_layer = text_layer_create((GRect) { .origin = { 0, 70 }, .size = { bounds.size.w, 30 } });
   text_layer_set_text_alignment(current_song_text_layer, GTextAlignmentCenter);
   text_layer_set_overflow_mode(current_artist_text_layer, GTextOverflowModeTrailingEllipsis);
-  text_layer_set_font(current_song_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_font(current_song_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
   layer_add_child(window_layer, text_layer_get_layer(current_song_text_layer));
 
   current_album_text_layer = text_layer_create((GRect) { .origin = { 0, 105 }, .size = { bounds.size.w, 30 } });
   text_layer_set_text_alignment(current_album_text_layer, GTextAlignmentCenter);
   text_layer_set_overflow_mode(current_album_text_layer, GTextOverflowModeTrailingEllipsis);
-  text_layer_set_font(current_album_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_font(current_album_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
   layer_add_child(window_layer, text_layer_get_layer(current_album_text_layer));
 
   // JS on ready loads data, so this just displays
