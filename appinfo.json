@@ -1,0 +1,23 @@
+{
+    "appKeys": {
+        "album": 2,
+        "artist": 0,
+        "song": 1
+    },
+    "capabilities": [
+        ""
+    ],
+    "companyName": "r343lry@gmail.com",
+    "longName": "KEXP Now Playing",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "shortName": "KEXP Now Playing",
+    "uuid": "63b5d6ef-603a-4f23-8482-09344925a0e4",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
