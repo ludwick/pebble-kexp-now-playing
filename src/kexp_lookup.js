@@ -1,4 +1,7 @@
-
+/*
+ * Copyright (C) 2015, Rachael Ludwick
+ * Licensed under the terms of the MIT License.
+ */
 
 // This util converts and formats a date:
 //    2015-01-31T10%3A00%3A00.000
@@ -11,11 +14,11 @@ var dateUtil = (function() {
   
   function convertDateToPST(date) {
     var serverUtcOffset = -480;
-		var ticks = date.getTime();
-		var localUtcOffset = date.getTimezoneOffset();
-		var difference = serverUtcOffset + localUtcOffset;
-		return new Date(ticks + (difference * 60 * 1000));
-	}
+    var ticks = date.getTime();
+    var localUtcOffset = date.getTimezoneOffset();
+    var difference = serverUtcOffset + localUtcOffset;
+    return new Date(ticks + (difference * 60 * 1000));
+  }
 
   return {
     formatDate: function(date) {
