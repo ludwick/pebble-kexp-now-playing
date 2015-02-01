@@ -4,6 +4,10 @@ This repository has a simple Pebble watch app to show current KEXP radio song.
 
 Currently it is built using [CloudPebble](https://cloudpebble.net).
 
+You can see a picture of it in action!
+
+![KEXP Now Playing App in action](https://farm8.staticflickr.com/7325/16227719299_bd9bc50895_s.jpg).
+
 ## Usage
 
 Run the app. It should load the current song. Press the center button and it will refresh (if the song has changed).
