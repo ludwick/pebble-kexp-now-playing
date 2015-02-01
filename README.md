@@ -6,7 +6,7 @@ Currently it is built using [CloudPebble](https://cloudpebble.net).
 
 You can see a picture of it in action!
 
-![KEXP Now Playing App in action](https://farm8.staticflickr.com/7325/16227719299_bd9bc50895_s.jpg).
+![KEXP Now Playing App in action](https://farm8.staticflickr.com/7325/16227719299_bd9bc50895_n.jpg).
 
 ## Usage
 
