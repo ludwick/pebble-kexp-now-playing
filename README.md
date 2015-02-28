@@ -14,13 +14,15 @@ Run the app. It should load the current song. Press the center button and it wil
 
 ## Limitations
 
-This version uses a hidden HTTP request the main KEXP player uses to update its playlist and extracts the Artist, Track and Album information from that. This may break at any time and is an egregious hack.
+This version uses the [official API](http://cache.kexp.org/cache/docs) however
+it is very basic in that it uses only the "latest" play request and just shows
+dashes if some field is missing. The egregious hack has been removed. It now
+also puts the text in a scroll layer nad in theory will allow seeing all text.
 
 Stuff that is busted:
 
-* Most HTML entities don't work.
-* Unicode support is pretty busted.
-* No scrolling of long strings.
-* KEXP feed data sometimes has malformed UTF-8 in the encoded JSON. So it looks ugly on the watch too.
+* Most HTML entities probably don't work.
+* Unicode support is pretty busted (unless magically the JSON gotten via the API
+  copied into char[] and displayed "just works" which I highly doubt).
 * Air breaks are not handled very well, depending on when the app was started and when you try to refresh.
 
