@@ -98,17 +98,14 @@ var kexp = (function() {
           var response = extractPlayListData(req.responseText);
           if (response.isValid) {
             var data = {
-              'song': response.track,
-              'artist': response.artist,
-              'album': response.album
+              'song_info': response.artist + "\n" + response.album + "\n" + response.track
             };
             
-            console.log("handing off msg=" + JSON.stringify(data));
             handler(data);
             setLastUpdated(now);
           }
         } else {
-          console.log('Failed to get results from KEXP');
+          console.log('Failed to get results from KEXP.');
         }
       };
       req.send(null);

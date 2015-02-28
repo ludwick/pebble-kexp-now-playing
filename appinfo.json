@@ -1,8 +1,6 @@
 {
     "appKeys": {
-        "album": 2,
-        "artist": 0,
-        "song": 1
+        "song_info": 0
     },
     "capabilities": [
         ""
