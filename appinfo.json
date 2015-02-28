@@ -13,6 +13,7 @@
     "resources": {
         "media": []
     },
+    "sdkVersion": "2",
     "shortName": "KEXP Now Playing",
     "uuid": "63b5d6ef-603a-4f23-8482-09344925a0e4",
     "versionCode": 1,

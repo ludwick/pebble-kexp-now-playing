@@ -2,47 +2,10 @@
  * Copyright (C) 2015, Rachael Ludwick
  * Licensed under the terms of the MIT License.
  */
-
-// This util converts and formats a date:
-//    2015-01-31T10%3A00%3A00.000
-// in the same timezone as the KEXP server (PST).
-//
-var dateUtil = (function() {
-  function zeroPad(num) {
-    return num < 10 ? ("0" + num) : num;
-  }
-  
-  function convertDateToPST(date) {
-    var serverUtcOffset = -480;
-    var ticks = date.getTime();
-    var localUtcOffset = date.getTimezoneOffset();
-    var difference = serverUtcOffset + localUtcOffset;
-    return new Date(ticks + (difference * 60 * 1000));
-  }
-
-  return {
-    formatDate: function(date) {
-      var sd = convertDateToPST(date);
-      var year = sd.getFullYear();
-      var month = zeroPad(sd.getMonth() + 1);
-      var day = zeroPad(sd.getDate());
-      var hour = zeroPad(sd.getHours());
-      var min = zeroPad(sd.getMinutes());
-      var sec = zeroPad(sd.getSeconds());
-      return encodeURIComponent(
-                year + "-" +
-                month + "-" +
-                day + "T" +
-                hour + ":" +
-                min + ":" +
-                sec + ".000"
-      );
-    }
-  };
-}());
-
 var kexp = (function() {
   
+  // if entities come back in json which might not be the case with 
+  // proper cache api
   var unescapeEntities = (function() {
      // This is not particularly unicode or internationalized.
     //
@@ -70,52 +33,47 @@ var kexp = (function() {
       }
       return final;
     };
-  }());
-
-  // This is an egregious hack. The HTML returned will contain
-  // a data attribute on the main div that has the JSON version
-  // of what is in the rest of the returned HTML. On subsequent
-  // calls (controlled by the 'since' query param), the content
-  // will be empty if the track hasn't changed so it's possible
-  // the data won't be found in the html.
-  // 
-  // The HTML and the data attribute seem to handle unicode
-  // differently such that JSON.parse of the data ends up
-  // with malformed UTF-8 data.
+  })();
+  
+  // This takes an object with these fields:
+  // - __type
+  // - Name
+  // - other fields specific to type
+  // But we only care about the name field.
   //
-  function extractPlayListData(htmlText) {
-    var dataAttrRegExp = new RegExp("data-playlistitem='(.+)'>");
-    var results = dataAttrRegExp.exec(htmlText);
-    if (results && typeof results !== "undefined" && results.hasOwnProperty("1")) {
-      var jsonData = results[1];
-      if (jsonData !== "undefined") {
-        var parsedData = JSON.parse(jsonData);
-        console.log("got data: " + JSON.stringify(parsedData));
+  function extractField(fieldName, obj) {
+    if (obj.hasOwnProperty(fieldName)) {
+      var field = obj[fieldName];
+      if (field.hasOwnProperty('Name')) {
+        return unescapeEntities(field.Name);
+      }
+    }
+    return "--";
+  }
+
+  // API documented here: http://cache.kexp.org/cache/docs
+  function extractPlayListData(jsonData) {
+    var data = JSON.parse(jsonData);
+    console.log("parsed data: " + JSON.stringify(data));
+    if (data.hasOwnProperty('Plays') && data.Plays) {
+      var plays = data.Plays;
+      if (plays instanceof Array && plays.length > 0) {
+      var firstPlay = plays[0];
+      if (firstPlay.hasOwnProperty("Artist")) {
         return {
-          isValid: parsedData.hasOwnProperty("PlayUri"),
-          getField: function(fieldName) {
-            if (typeof parsedData[fieldName] !== "undefined") {
-              return unescapeEntities(parsedData[fieldName]);
-            }
-            return "--";
-          }
+          isValid: true,
+          artist: extractField('Artist', firstPlay),
+          album: extractField('Release', firstPlay),
+          track: extractField('Track', firstPlay)
         };
       }
     }
     return {isValid: false};
+    }
   }
-  
- 
+
   var lastRequestDate;
   var updateCount = 0;
-  
-  function haveUpdated() {
-    return updateCount > 0;
-  }
-  
-  function getLastUpdated(now) {
-    return haveUpdated() ? lastRequestDate : now;
-  }
   
   function setLastUpdated(now) {
     lastRequestDate = now;
@@ -123,25 +81,14 @@ var kexp = (function() {
     console.log("KEXP update count=" + updateCount + ", last updated date=" + lastRequestDate.toISOString());
   }
 
-  function getPlaylistUrl(now) {
-    var url = "http://kexp.org/playlist/playlistupdates?";
-    url += "channel=1";
-    url += "&";
-    url += "start=";
-    url += dateUtil.formatDate(now);
-    if (haveUpdated()) {
-      url += "&";
-      url += "since=";
-      url += dateUtil.formatDate(getLastUpdated(now));
-    }
-  
-    return url;
+  function getPlaylistUrl() {
+    return "http://cache.kexp.org/cache/latestPlay?channel=1";
   }
 
   return {
     updateCurrentInfo: function (handler) {
       var now = new Date();
-      var requestUrl = getPlaylistUrl(now);
+      var requestUrl = getPlaylistUrl();
       console.log("Calling KEXP via url: " + requestUrl);
 
       var req = new XMLHttpRequest();
@@ -150,10 +97,11 @@ var kexp = (function() {
         if (req.readyState == 4 && req.status == 200) {
           var response = extractPlayListData(req.responseText);
           if (response.isValid) {
-            var track = response.getField("TrackName");
-            var artist = response.getField("ArtistName");
-            var album = response.getField("ReleaseName");
-            var data = { 'song': track, 'artist': artist, 'album': album};
+            var data = {
+              'song': response.track,
+              'artist': response.artist,
+              'album': response.album
+            };
             
             console.log("handing off msg=" + JSON.stringify(data));
             handler(data);
@@ -166,7 +114,7 @@ var kexp = (function() {
       req.send(null);
     }
   };
-}());
+})();
 
 function sendAppMsg(data) {
   console.log("sending back to pebble " + JSON.stringify(data));
